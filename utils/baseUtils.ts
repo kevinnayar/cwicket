@@ -196,9 +196,8 @@ export function playNOvers(n: number, scoreIn: TeamScore): TeamScore {
   let score = { ...scoreIn };
 
   for (let i  = 0; i < n; i += 1) {
-    const scoreAfterOver = playSingleOver(score);
-    score = scoreAfterOver;
-    if (scoreAfterOver.inningComplete) return score;
+    score = playSingleOver(score);
+    if (score.inningComplete) return score;
   }
 
   return {

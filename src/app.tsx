@@ -8,7 +8,7 @@ import { createTeamAndStartingScore } from '../utils/factoryUtils';
 export default function App() {
   const namesA = [
     'Anthony',
-    'Baptiste',
+    'Bonaparte',
     'Craigo',
     'Dominic',
     'Eric',
@@ -20,47 +20,77 @@ export default function App() {
     'Kevin',
   ];
   const namesB = [
-    'Arturro',
-    'Bonaparte',
-    'Chris',
-    'Derek',
-    'Eddie',
-    'Frank',
-    'Geoff',
-    'Hyder',
-    'Imran',
-    'Jeremiah',
-    'Kyle',
+    'Leonardo',
+    'Mitch',
+    'Napolean',
+    'Oscar',
+    'Patrick',
+    'Qasem',
+    'Ronald',
+    'Sebastian',
+    'Tyler',
+    'Ulysses',
+    'Vivek',
   ];
 
   const [scoreA, setScoreA] = useState(createTeamAndStartingScore(namesA));
   const [scoreB, setScoreB] = useState(createTeamAndStartingScore(namesB));
 
-  function playInning(score: TeamScore, setScore: React.Dispatch<React.SetStateAction<TeamScore>>) {
-    const updatedScore = playNOvers(50, score);
-    setScore(updatedScore);
+  function playMatch() {
+    const newScoreA = createTeamAndStartingScore(namesA);
+    const updatedScoreA = playNOvers(50, newScoreA);
+    setScoreA(updatedScoreA);
+
+    const newScoreB = createTeamAndStartingScore(namesB);
+    const updatedScoreB = playNOvers(50, newScoreB);
+    setScoreB(updatedScoreB);
   }
 
-  function resetScores() {
-    setScoreA(createTeamAndStartingScore(namesA));
-    setScoreB(createTeamAndStartingScore(namesB));
-  }
-
-  const scoreStyles: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    flexBasis: '50%',
-    border: '1px solid #ccc',
-    margin: 20,
-  };
-
-  const btnStyles = {
-    height: 50,
-    background: '#121212',
-    color: 'white',
-    border: 0,
-    outline: 0,
-    cursor: 'pointer',
+  const fontFamily =
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
+  const styles: { [key: string]: React.CSSProperties } = {
+    score: {
+      fontFamily,
+      display: 'flex',
+      flexDirection: 'column',
+      flexBasis: '50%',
+      border: '1px solid #ccc',
+      margin: 20,
+    },
+    title: {
+      margin: 20,
+      fontFamily,
+      textAlign: 'center',
+    },
+    code: {
+      fontFamily: 'Courier, monospace, monospace',
+      background: '#444',
+      color: '#ccc',
+      display: 'flex',
+      flex: 1,
+      margin: 0,
+      padding: 30,
+    },
+    runs: {
+      margin: 20,
+    },
+    run: {
+      display: 'flex',
+      borderBottom: '1px solid #ccc',
+      paddingBottom: 5,
+    },
+    btn: {
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      height: 50,
+      background: '#121212',
+      color: 'white',
+      border: 0,
+      outline: 0,
+      cursor: 'pointer',
+      margin: '0 20px 10px',
+      textTransform: 'uppercase',
+    },
   };
 
   console.log({
@@ -68,13 +98,25 @@ export default function App() {
     batsmenB: scoreB.batsmen,
   });
 
+  const winner = (scoreA.totalRuns === scoreB.totalRuns)
+    ? undefined
+    : scoreA.totalRuns > scoreB.totalRuns ? 'Team A' : 'Team B';
+  
+  const headline = (winner === undefined)
+    ? 'Team A vs. Team B'
+    : `The winner is ${winner}!`;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
+      <button style={styles.btn} onClick={playMatch}>
+        Play Match
+      </button>
+      <h1 style={styles.title}>{headline}</h1>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={scoreStyles}>
-          <button style={btnStyles} onClick={() => playInning(scoreA, setScoreA)}>Team A: Play Inning</button>
+        <div style={styles.score}>
+          <h2 style={styles.title}>Team A</h2>
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <pre>
+            <pre style={styles.code}>
               {JSON.stringify(
                 {
                   totalRuns: scoreA.totalRuns,
@@ -87,11 +129,26 @@ export default function App() {
               )}
             </pre>
           </div>
+          <div style={styles.runs}>
+            {scoreA.totalRuns > 0
+              ? scoreA.batsmen
+                  .sort((a, b) => {
+                    if (a.runs < b.runs) return 1;
+                    if (a.runs > b.runs) return -1;
+                    return 0;
+                  })
+                  .map((batsman) => (
+                    <p key={batsman.name} style={styles.run}>
+                      <span>{batsman.name}</span> <span style={{ marginLeft: 'auto' }}>{batsman.runs} runs</span>
+                    </p>
+                  ))
+              : null}
+          </div>
         </div>
-        <div style={scoreStyles}>
-          <button style={btnStyles} onClick={() => playInning(scoreB, setScoreB)}>Team B: Play Inning</button>
+        <div style={styles.score}>
+          <h2 style={styles.title}>Team B</h2>
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <pre>
+            <pre style={styles.code}>
               {JSON.stringify(
                 {
                   totalRuns: scoreB.totalRuns,
@@ -104,9 +161,23 @@ export default function App() {
               )}
             </pre>
           </div>
+          <div style={styles.runs}>
+            {scoreB.totalRuns > 0
+              ? scoreB.batsmen
+                  .sort((a, b) => {
+                    if (a.runs < b.runs) return 1;
+                    if (a.runs > b.runs) return -1;
+                    return 0;
+                  })
+                  .map((batsman) => (
+                    <p key={batsman.name} style={styles.run}>
+                      <span>{batsman.name}</span> <span style={{ marginLeft: 'auto' }}>{batsman.runs} runs</span>
+                    </p>
+                  ))
+              : null}
+          </div>
         </div>
       </div>
-      <button style={btnStyles} onClick={resetScores}>Reset</button>
     </div>
   );
 }
