@@ -121,7 +121,7 @@ function getStrikerAndNonStriker(score: TeamScore): StrikerAndNonStriker {
   };
 }
 
-export function playSingleBowl(scoreIn: TeamScore): void | TeamScore {
+function playSingleBowl(scoreIn: TeamScore): void | TeamScore {
   const score = { ...scoreIn };
   const { striker, strikerIndex, nonStriker, nonStrikerIndex } = getStrikerAndNonStriker(score);
 
@@ -160,7 +160,7 @@ export function playSingleBowl(scoreIn: TeamScore): void | TeamScore {
   }
 }
 
-export function playSingleOver(scoreIn: TeamScore): TeamScore {
+function playSingleOver(scoreIn: TeamScore): TeamScore {
   let score = { ...scoreIn };
 
   for (let i = 0; i < 6; i += 1) {
@@ -205,8 +205,6 @@ export function playNOvers(n: number, scoreIn: TeamScore): TeamScore {
     inningComplete: true,
   };
 }
-
-
 
 
 
